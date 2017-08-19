@@ -1,36 +1,39 @@
 #!/usr/bin/perl
 
-#use strict;
+#use strict;
 #use warnings;
-use Data::Dumper;
+use Data::Dumper;
 
 #my $filename = "SL0004.txt";
 #my $outfile = "OutputOdds1.txt";
 
-print "Please enter the input file: " ;
+print "Please enter the input file: " ;
 $filename =  <STDIN>;
 chomp $filename;
 open(my $fh, "<", $filename) 
 	or die "cannot open input file: $!";
-print "Please enter the output file: ";
+print "Please enter the output file: ";
 $outfile = <STDIN>;
 chomp $outfile;
 open(STDOUT, ">", $outfile)
 	or die "cannot open output file: $!";
-print "Your input are:  " , $filename, "   ", $outfile;
-#if (-e $filename) { print "Odds1, Odds2\n"; }
+print "Your input are:  " , $filename, "   ", $outfile;
+
+#if (-e $filename) { print "Odds1, Odds2\n"; }
 #unless (-e $filename) { print "InFile Doesn't Exist!\n"; }
 
-##Declaring variables
+#
+#Declaring variables
 #	
 my @v_string1=();
 my $temp="";
-
 #
-# Below are Betbrain Patterns to be parsed!#
+# Below are Betbrain Patterns to be parsed!
+#
 my $pat0='newRow';				# Betbrain's main contents starting from here...
 my $pat1='"rowId":';				# Hedging opportunity records, unique per opportunity
-my $pat2='"returnValue":';           		# estimated profit margin of the opportunitymy $pat3='"name":';                  		# bet type of the opportunity
+my $pat2='"returnValue":';           		# estimated profit margin of the opportunity
+my $pat3='"name":';                  		# bet type of the opportunity
 my $pat4='"startDate":';
 my $pat5='"discName":';              		# sports type of the opportunity
 my $pat6='"link":';
@@ -40,7 +43,7 @@ my $pat9='"locationName":';          		# country name
 my $pat10='"shortName":';			# The handicap information
 my $pat11='"eventName":';			# The event name 
 my $pat12='"scopeName":';			# Scope and other conditions of the offer
-
+
 my $i=1;
 my $j=1;
 my $t_string="";
@@ -49,9 +52,10 @@ my $pos=0;
 my $nxtpos=0;
 
 my %seen = ();
-my %k_table=();$row_hashtbl1{$pos} = [] unless exists $row_hashtbl1{$pos};
+my %k_table=();
+$row_hashtbl1{$pos} = [] unless exists $row_hashtbl1{$pos};
 
-while (defined ($line = <$fh>)) {
+while (defined ($line = <$fh>)) {
 	chomp($line);
 	$_=$line;
 	if (/$pat0/) {
@@ -61,12 +65,15 @@ my %k_table=();$row_hashtbl1{$pos} = [] unless exists $row_hashtbl1{$pos};
 		@v_string1 = split /$pat1/, $_; 
 		$j=1;
 		foreach (@v_string1) {
-			$temp = "";			#			# Parse the hash key = rowId and use it to hash its related strings
+			$temp = "";
+			#
+			# Parse the hash key = rowId and use it to hash its related strings
 			#
 			$t_string = \@v_string1;
 			$nxtpos = index $t_string->[$j],qq/"/,1;
 			$s_string=substr($t_string->[$j],1,$nxtpos-1);	
-			#			# Store away the key and the items in hash table %k_table 	
+			#
+			# Store away the key and the items in hash table %k_table 	
 			#
 			$pos = $nxtpos+1;
 			$nxtpos = length $t_string->[$j];	
@@ -158,7 +165,8 @@ foreach $s_string (sort keys %k_table) {
 				#
 				# Make it friendly for comma delimited parser such as Excel
 				#
-				$temp =~ s/,/ /;						push @{$row_hashtbl1{$s_string}},$temp ;
+				$temp =~ s/,/ /;		
+				push @{$row_hashtbl1{$s_string}},$temp ;
 			}
 			if (/$pat12/) {
 				$nxtpos = index $t_string->[$j],qq/$pat12/,2;
