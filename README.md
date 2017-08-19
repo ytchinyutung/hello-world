@@ -1,4 +1,4 @@
 # hello-world
 just another repository
-This is the first program in github to be designed. 
-Nothing that special about using it, right?
+This is my first program in github.
+Nothing special.
